@@ -7,10 +7,9 @@ import (
 )
 
 func Start(port int64, client *GitClient) {
-	// TODO clone
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/webhook" {
-			// TODO pull
+		if r.URL.Path == "/webhook/github" {
+			gitHubWebhook(w, r, client)
 			return
 		}
 	})
