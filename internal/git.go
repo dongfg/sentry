@@ -47,6 +47,18 @@ func New(o *GitOptions) (client *GitClient) {
 }
 
 func (c *GitClient) Clone(path string) {
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		r, err := git.PlainOpen(path)
+		if err != nil {
+			panic(err)
+		}
+		c.rp = r
+		err = c.Pull(os.Stdout)
+		if err != nil && err != git.NoErrAlreadyUpToDate {
+			panic(err)
+		}
+		return
+	}
 	r, err := git.PlainClone(path, false, c.co)
 	if err != nil {
 		panic(err)
@@ -62,5 +74,6 @@ func (c *GitClient) Pull(wr io.Writer) error {
 	return w.Pull(&git.PullOptions{
 		RemoteName: "origin",
 		Progress:   wr,
+		Auth:       c.co.Auth,
 	})
 }
