@@ -37,6 +37,7 @@ var appCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Start http server to receive webhook",
 	Run: func(cmd *cobra.Command, args []string) {
+		client.Clone(path)
 		internal.Start(port, client)
 	},
 }
