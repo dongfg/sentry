@@ -30,7 +30,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var port int64
+var (
+	port          int64
+	webhookSecret string
+)
 
 // appCmd represents the app command
 var appCmd = &cobra.Command{
@@ -38,6 +41,7 @@ var appCmd = &cobra.Command{
 	Short: "Start http server to receive webhook",
 	Run: func(cmd *cobra.Command, args []string) {
 		client.Clone(path)
+		client.SetWebhookSecret(webhookSecret)
 		internal.Start(port, client)
 	},
 }
@@ -46,6 +50,8 @@ func init() {
 	rootCmd.AddCommand(appCmd)
 
 	appCmd.PersistentFlags().Int64VarP(&port, "port", "P", 8080, "server port")
+	appCmd.PersistentFlags().StringVarP(&webhookSecret, "webhookSecret", "", "", "webhook secret")
 
 	_ = viper.BindPFlag("port", appCmd.PersistentFlags().Lookup("port"))
+	_ = viper.BindPFlag("webhookSecret", appCmd.PersistentFlags().Lookup("webhookSecret"))
 }

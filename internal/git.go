@@ -13,6 +13,8 @@ type GitClient struct {
 	rp *git.Repository
 
 	co *git.CloneOptions
+
+	webhookSecret string
 }
 
 type GitOptions struct {
@@ -76,4 +78,8 @@ func (c *GitClient) Pull(wr io.Writer) error {
 		Progress:   wr,
 		Auth:       c.co.Auth,
 	})
+}
+
+func (c *GitClient) SetWebhookSecret(webhookSecret string) {
+	c.webhookSecret = webhookSecret
 }

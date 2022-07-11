@@ -12,6 +12,10 @@ func Start(port int64, client *GitClient) {
 			gitHubWebhook(w, r, client)
 			return
 		}
+		if r.URL.Path == "/webhook/coding" {
+			codingWebhook(w, r, client)
+			return
+		}
 	})
 	addr := fmt.Sprintf(":%d", port)
 	log.Println("Listening on " + addr)

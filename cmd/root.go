@@ -26,6 +26,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/dongfg/sentry/internal"
+	"github.com/spf13/pflag"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -115,5 +116,26 @@ func initConfig() {
 		if viper.GetBool("verbose") {
 			_, _ = fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 		}
+		postInitCommands(rootCmd.Commands())
+	} else {
+		cobra.CheckErr(err)
 	}
+}
+
+func postInitCommands(commands []*cobra.Command) {
+	for _, cmd := range commands {
+		presetRequiredFlags(cmd)
+		if cmd.HasSubCommands() {
+			postInitCommands(cmd.Commands())
+		}
+	}
+}
+
+func presetRequiredFlags(cmd *cobra.Command) {
+	_ = viper.BindPFlags(cmd.Flags())
+	cmd.Flags().VisitAll(func(f *pflag.Flag) {
+		if viper.IsSet(f.Name) && viper.GetString(f.Name) != "" {
+			_ = cmd.Flags().Set(f.Name, viper.GetString(f.Name))
+		}
+	})
 }
