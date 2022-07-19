@@ -5,6 +5,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
+	ssh2 "golang.org/x/crypto/ssh"
 	"io"
 	"os"
 )
@@ -29,6 +30,7 @@ func New(o *GitOptions) (client *GitClient) {
 	var err error
 	if o.PrivateKey != "" {
 		auth, err = ssh.NewPublicKeysFromFile(o.Username, o.PrivateKey, o.Password)
+		auth.(*ssh.PublicKeys).HostKeyCallback = ssh2.InsecureIgnoreHostKey()
 		if err != nil {
 			panic(err)
 		}
