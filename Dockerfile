@@ -7,7 +7,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
     && apk --no-cache add build-base
 COPY . .
 RUN go mod download
-RUN go build -a -o sentry ./cmd/sentry
+RUN go build -a -o sentry
 
 FROM alpine:latest
 LABEL MAINTAINER "dongfg <mail@dongfg.com>"
