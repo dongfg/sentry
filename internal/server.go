@@ -8,6 +8,10 @@ import (
 
 func Start(port int64, client *GitClient) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" || r.URL.Path == "" {
+			_, _ = fmt.Fprintf(w, "pong")
+			return
+		}
 		if r.URL.Path == "/webhook/github" {
 			gitHubWebhook(w, r, client)
 			return
